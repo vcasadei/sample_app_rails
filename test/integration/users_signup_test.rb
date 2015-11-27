@@ -10,6 +10,12 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                password_confirmation: "bar" }
     end
     assert_template 'users/new'
+    
+    assert_select 'div#error_explanation'
+    assert_select 'div.alert-danger'
+    assert_select 'li', "Name can't be blank"
+    assert_select 'li', "Email is invalid"
+    assert_select 'li', "Password confirmation doesn't match Password"
   end
   
   test "invalid signup information - email" do
@@ -21,6 +27,10 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                password_confirmation: "foo" }
     end
     assert_template 'users/new'
+    
+    assert_select 'div#error_explanation'
+    assert_select 'div.alert-danger'
+    assert_select 'li', "Email is invalid"
   end
   
   test "invalid signup information - password" do
@@ -32,5 +42,21 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                password_confirmation: "" }
     end
     assert_template 'users/new'
+    assert_select 'div#error_explanation'
+    assert_select 'div.alert-danger'
+    assert_select 'li', "Password confirmation doesn't match Password"
+  end
+  
+  test "valid signup information - sucess" do
+    get signup_path
+    assert_difference 'User.count', 1 do
+      post_via_redirect users_path, user: { name:  "Example User",
+                                            email: "user@example.com",
+                                            password:              "password",
+                                            password_confirmation: "password" }
+    end
+    assert_template 'users/show'
+    assert_select 'div.alert-success'
+    assert_not flash.nil?
   end
 end
