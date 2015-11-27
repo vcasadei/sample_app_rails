@@ -16,6 +16,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_select 'li', "Name can't be blank"
     assert_select 'li', "Email is invalid"
     assert_select 'li', "Password confirmation doesn't match Password"
+    assert_not is_logged_in?
   end
   
   test "invalid signup information - email" do
@@ -31,6 +32,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_select 'div#error_explanation'
     assert_select 'div.alert-danger'
     assert_select 'li', "Email is invalid"
+    assert_not is_logged_in?
   end
   
   test "invalid signup information - password" do
@@ -45,6 +47,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_select 'div#error_explanation'
     assert_select 'div.alert-danger'
     assert_select 'li', "Password confirmation doesn't match Password"
+    assert_not is_logged_in?
   end
   
   test "valid signup information - sucess" do
@@ -58,5 +61,6 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_template 'users/show'
     assert_select 'div.alert-success'
     assert_not flash.nil?
+    assert is_logged_in?
   end
 end
